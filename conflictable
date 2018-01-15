@@ -14,3 +14,135 @@
 9
 
 ---
+4d90b38 add foo
+77ef097 conflictable
+52b88f1 conflictable 1.5
+cbeb8b5 conflictable 3.5
+a74fb89 conflictable 7.5
+98da733 conflictable 3.6
+a3dde05 conflictable 8.5
+
+move 3.6 before 3.5:
+
+$ git rebase --interactive 4d90b38
+
+error: could not apply 98da733... conflictable 3.6
+
+When you have resolved this problem, run "git rebase --continue".
+If you prefer to skip this patch, run "git rebase --skip" instead.
+To check out the original branch and stop rebasing, run "git rebase --abort".
+Could not apply 98da7331b0090344468a39bd44da3b0434ea8422... conflictable 3.6
+
+$ git status
+
+interactive rebase in progress; onto 4d90b38
+Last commands done (3 commands done):
+   pick 52b88f1 conflictable 1.5
+   pick 98da733 conflictable 3.6
+  (see more in file .git/rebase-merge/done)
+Next commands to do (3 remaining commands):
+   pick cbeb8b5 conflictable 3.5
+   pick a74fb89 conflictable 7.5
+  (use "git rebase --edit-todo" to view and edit)
+You are currently rebasing branch 'master' on '4d90b38'.
+  (fix conflicts and then run "git rebase --continue")
+  (use "git rebase --skip" to skip this patch)
+  (use "git rebase --abort" to check out the original branch)
+
+Unmerged paths:
+  (use "git reset HEAD <file>..." to unstage)
+  (use "git add <file>..." to mark resolution)
+
+	both modified:   conflictable
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+$ head conflictable
+
+1
+1.5
+2
+3
+<<<<<<< HEAD
+=======
+3.5
+3.6  # rebase me before 3.5
+>>>>>>> 98da733... conflictable 3.6
+4
+
+$ git mergetool
+
+$ head -6 conflictable
+
+1
+1.5
+2
+3
+3.6  # rebase me before 3.5
+4
+
+$ git rebase --continue
+
+[detached HEAD 446e78f] conflictable 3.6
+ 1 file changed, 1 insertion(+)
+error: could not apply cbeb8b5... conflictable 3.5
+
+When you have resolved this problem, run "git rebase --continue".
+If you prefer to skip this patch, run "git rebase --skip" instead.
+To check out the original branch and stop rebasing, run "git rebase --abort".
+Could not apply cbeb8b525d6ac78a208aec8786e49a7e40ef25ea... conflictable 3.5
+
+$ git status
+
+interactive rebase in progress; onto 4d90b38
+Last commands done (4 commands done):
+   pick 98da733 conflictable 3.6
+   pick cbeb8b5 conflictable 3.5
+  (see more in file .git/rebase-merge/done)
+Next commands to do (2 remaining commands):
+   pick a74fb89 conflictable 7.5
+   pick a3dde05 conflictable 8.5
+  (use "git rebase --edit-todo" to view and edit)
+You are currently rebasing branch 'master' on '4d90b38'.
+  (fix conflicts and then run "git rebase --continue")
+  (use "git rebase --skip" to skip this patch)
+  (use "git rebase --abort" to check out the original branch)
+
+Unmerged paths:
+  (use "git reset HEAD <file>..." to unstage)
+  (use "git add <file>..." to mark resolution)
+
+	both modified:   conflictable
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+$ head conflictable
+
+1
+1.5
+2
+3
+<<<<<<< HEAD
+3.6  # rebase me before 3.5
+=======
+3.5
+>>>>>>> cbeb8b5... conflictable 3.5
+4
+
+$ git mergetool
+
+$ head -7 conflictable
+
+1
+1.5
+2
+3
+3.5
+3.6  # rebase me before 3.5
+4
+
+$ git rebase --continue
+
+[detached HEAD 1ea68e1] conflictable 3.5
+ 1 file changed, 1 insertion(+)
+Successfully rebased and updated refs/heads/master.
